@@ -1,24 +1,30 @@
 package tmehut.activiti;
 
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
+import org.apache.log4j.BasicConfigurator;
 
 /**
- * Hello world!
- *
+ * Attempt
+ * 
  */
 public class Attempt 
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World! updated 8" );
-        try{
-			//System.out.println(ProcessEngines.class.getName());
-			//System.out.println(ProcessEngines.getDefaultProcessEngine().getName());
-        	ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
+    	//configure log4j
+    	BasicConfigurator.configure();
+        
+    	try{
+        	ProcessEngine processEngine = ProcessEngineConfiguration
+        			   .createStandaloneInMemProcessEngineConfiguration()
+        			   .buildProcessEngine();
+
+        	System.out.println("Process Engine Name = " + processEngine.getName());      	
 		} catch(NoClassDefFoundError e) {
 			System.out.println("Exception: NoClassDefFoundError " + e.getMessage());
 		}
 		
-		System.out.println("Recovered from exception");
+		System.out.println("Recovered from exception if any");
     }
 }
