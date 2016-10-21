@@ -49,7 +49,7 @@ public class Attempt
     		 //Starting the deployed process instance by key <process id="my-process">
     		 RuntimeService runtimeService = processEngine.getRuntimeService();
     		 ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("my-process");
-    		 
+    		    		 
     		 //Working with tasks
     		 TaskService taskService = processEngine.getTaskService();
     		 try {
@@ -57,8 +57,16 @@ public class Attempt
     			 //get active task
         		 Task task = taskService.createTaskQuery().active().singleResult();
         		 System.out.println(task.getName());
+        		 System.out.println(task.getId());
         		 
         		 System.out.println("task asignee = " + task.getAssignee());
+        		 
+        		 taskService.complete(task.getId());
+        		 task = taskService.createTaskQuery().active().singleResult();
+        		 System.out.println(task.getName());
+        		 
+        		 //runtimeService.suspendProcessInstanceById(processInstance.getId());
+        		 
 				
 			} catch (NullPointerException e) {
 				// TODO: handle exception
