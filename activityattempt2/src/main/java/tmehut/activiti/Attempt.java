@@ -1,8 +1,15 @@
 package tmehut.activiti;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.DeploymentBuilder;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.apache.log4j.BasicConfigurator;
 
 /**
@@ -31,13 +38,41 @@ public class Attempt
 			 * overview of the configuration properties.
 			 */    		
     		 ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-
-
-        	System.out.println("Process Engine Name = " + processEngine.getName());      	
+    		 System.out.println("Process Engine Name = " + processEngine.getName());
+    		
+    		 //Deploying process from the definition file repository/diagrams/myProcess.bpmn20.xml
+    		 RepositoryService repositoryService = processEngine.getRepositoryService();
+    		 DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
+    		 deploymentBuilder.addClasspathResource("diagrams/myProcess.bpmn20.xml");
+    		 deploymentBuilder.deploy();
+    		 
+    		 //Starting the deployed process instance by key <process id="my-process">
+    		 RuntimeService runtimeService = processEngine.getRuntimeService();
+    		 ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("my-process");
+    		 
+    		 //Working with tasks
+    		 TaskService taskService = processEngine.getTaskService();
+    		 try {
+    			 
+    			 //get active task
+        		 Task task = taskService.createTaskQuery().active().singleResult();
+        		 System.out.println(task.getName());
+        		 
+        		 System.out.println("task asignee = " + task.getAssignee());
+				
+			} catch (NullPointerException e) {
+				// TODO: handle exception
+				System.out.println("TMEHUT: NullPointerException");
+			} catch (ActivitiException e) {
+				// TODO: handle exception
+				System.out.println("TMEHUT: ActivityException - more than 1 tasks fullfills the defined criteria");
+			}
+    		 
+    		       	
 		} catch(NoClassDefFoundError e) {
 			System.out.println("Exception: NoClassDefFoundError " + e.getMessage());
 		}
 		
-		System.out.println("Recovered from exception if any");
+		System.out.println("END");
    }
 }
